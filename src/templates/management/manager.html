@@ -1,0 +1,41 @@
+<h1>To-do list de la semaine</h1>
+
+<div class="management-author">
+    <p>Bonjour <strong>{{username}}</strong> ! Voici ton planing de la semaine :</p>
+    <div class="k-management-user">
+        <h3>Liste des tâches</h3>
+        <div id="uklendar"></div>
+    </div>
+
+    {% if user in manager_ids %}
+
+    <div class="k-management">
+        <h3>Selectionner un utilisateur</h3>
+        <div id="klendar-users"></div>
+        <h3>Liste des tâches</h3>
+        <div id="klendar"></div>
+    </div>
+
+    {% endif %}
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+
+
+        const uKgenda = new KUserWeeks('{{admin_url}}', {{ user }}, 'uklendar', 'uklendar-actions');
+
+    {% if user in manager_ids %}
+
+    const kgenda = new KManagement('{{admin_url}}', {{ user_list }}, 'klendar', 'klendar-actions', 'klendar-users');
+
+    {% endif %}
+
+    });
+</script>

@@ -1,0 +1,10 @@
+{
+    "assets": [
+        "k-management.css",
+        "k-management.js"
+    ],
+    "controller_namespace" : "\\KManagement\\Controller\\",
+    "controllers" : {
+        "ManagementController": []
+    }
+}

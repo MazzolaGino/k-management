@@ -1,0 +1,22 @@
+{
+    "name": "kuroazeus/k-management",
+    "autoload": {
+        "psr-4": {
+            "KManagement\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mazzola Gino",
+            "email": "kuro.azeus@gmail.com"
+        }
+    ],
+    "require": {
+        "timber/timber": "^1.22"
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        }
+    }
+}
