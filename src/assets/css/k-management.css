@@ -29,10 +29,6 @@
     font-size: 20px;
 } 
 
-
-
-
-
 .k-management .management-actions,
 .k-management-user .management-actions{
     background-color: rgb(0, 0, 0);
@@ -48,4 +44,9 @@
 .k-management button:active,
 .k-management-user button:active {
     background-color: #004d7a;
+}
+
+table#current-week tr.hl{ 
+    background-color: rgb(223, 255, 255);
+    font-weight: bold;
 }

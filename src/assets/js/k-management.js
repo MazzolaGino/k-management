@@ -23,10 +23,55 @@ class KManagement {
 
         var e = document.getElementById("user-list");
         this.currentUser = e.value;
-        
-
         this.loadWeek();
+        this.createWeekSelector();
     }
+
+    createWeekSelector() {
+       
+    
+        const dateInput = this.createEl("input", "date-input");
+
+        dateInput.placeholder="dd-mm-yyyy"
+        dateInput.type = "date";
+        dateInput.value = this.currentDate.toISOString().slice(0, 10); // Initialiser la date actuelle
+
+        dateInput.addEventListener("input", () => {
+
+          this.currentDate = new Date(dateInput.value);
+          this.currentYear = this.currentDate.getFullYear();
+          this.currentWeek = Math.floor(
+            (this.currentDate - new Date(this.currentYear, 0, 1)) / 604800000
+          ) + 1;
+          
+          this.loadWeek();
+          this.highlightSelectedDay(dateInput);
+        });
+       
+    
+        this.getEl('k-genda').appendChild(dateInput);
+      }
+    
+      highlightSelectedDay(dateInput) {
+
+        const selectedDate = new Date(dateInput.value);
+        const tableRows = this.getEl('current-week').querySelectorAll('tbody tr');
+      
+        tableRows.forEach((tr) => {
+
+            var dateTd = tr.querySelectorAll('td')[1];
+            var date = dateTd.innerHTML;
+            var parts = date.split('/');
+            var mydate = new Date(parts[2], parts[1] - 1, parts[0]);
+
+            if(mydate.getDay() == selectedDate.getDay()) {
+                tr.classList.add('hl');
+            }else{
+                tr.classList.remove('hl');
+            }
+
+        });
+      }
 
     getEl(id) {
         return document.getElementById(id);
@@ -38,13 +83,15 @@ class KManagement {
 
     resetCalendar() {
         this.calendarBody.innerHTML = "";
-    }
+    } 
+      
 
     generateWeekCalendar() {
 
         this.resetCalendar();
         const table = this.createTable();
         table.setAttribute('class', 'wp-list-table widefat fixed striped table-view-list')
+        table.setAttribute('id', 'current-week');
         const thead = this.createTableHeader();
         const tbody = this.createTableBody();
         this.populateTableHeader(thead);
