@@ -216,6 +216,9 @@ class KManagement {
         descriptionInput.setAttribute("value", "");
         descriptionInput.addEventListener("input", this.handleDescriptionChange.bind(this));
 
+        const editorInfo = this.createEl('span');
+        editorInfo.innerHTML = 'Information Edition : <br /> Nouvelle ligne : &lt;br /&gt <br /> Mot en gras : &lt;strong&gt mot &lt;/strong&gt ';
+        descriptionCell.appendChild(editorInfo);
         descriptionCell.appendChild(descriptionInput);
         return descriptionCell;
     }
