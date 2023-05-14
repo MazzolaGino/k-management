@@ -210,8 +210,8 @@ class KManagement {
 
     createDescriptionCell(index) {
         const descriptionCell = this.createEl("td");
-        const descriptionInput = this.createEl("input");
-        descriptionInput.setAttribute("type", "text");
+        const descriptionInput = this.createEl("textarea");
+        //descriptionInput.setAttribute("type", "text");
         descriptionInput.setAttribute("id", "description-" + index);
         descriptionInput.setAttribute("value", "");
         descriptionInput.addEventListener("input", this.handleDescriptionChange.bind(this));
