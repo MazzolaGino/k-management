@@ -65,6 +65,44 @@ class ManagementController extends ManagementBaseController
         die();
     }
 
+     /**
+     * @action add_action
+     * @hook wp_ajax_nopriv_management_done_week
+     * @priority 10
+     * @args 1
+     */
+    public function saveAdminDoneWeek()
+    {
+        $this->_saveDone();
+        die();
+    }
+
+    /**
+     * @action add_action
+     * @hook wp_ajax_management_done_week
+     * @priority 10
+     * @args 1
+     */
+    public function saveDoneWeek()
+    {
+        $this->_saveDone();
+        die();
+    }
+
+    private function _saveDone() 
+    {
+
+        $data = json_decode($this->_getWeekArray(), true);
+
+        $data['dones'] = $this->post('dones');
+
+        $d = \json_encode($data, \JSON_PRETTY_PRINT);
+
+        \update_option($data['year'] . '-' . $data['week'] . '-' . $data['user'], $d);
+
+        return $d;
+    }
+
 
     /**
      * @action add_action
@@ -104,6 +142,31 @@ class ManagementController extends ManagementBaseController
         die();
     }
 
+        /**
+     * @action add_action
+     * @hook wp_ajax_nopriv_management_get_user_week
+     * @priority 10
+     * @args 1
+     */
+    public function getAdminUserWeek()
+    {
+        echo json_decode($this->_getWeekData());
+        die();
+    }
+
+
+    /**
+     * @action add_action
+     * @hook wp_ajax_management_get_user_week
+     * @priority 10
+     * @args 1
+     */
+    public function getUserWeek()
+    {
+        echo $this->_getWeekData();
+        die();
+    }
+
     private function _saveWeek()
     {
         $data = $this->post();
@@ -122,9 +185,14 @@ class ManagementController extends ManagementBaseController
     private function _getWeekData()
     {
         return json_encode(
-            json_decode(get_option($this->post('year') . '-' . $this->post('week') . '-' . $this->post('user'))),
+            json_decode($this->_getWeekArray()),
             JSON_PRETTY_PRINT
         );
+    }
+
+    private function _getWeekArray()
+    {
+        return get_option($this->post('year') . '-' . $this->post('week') . '-' . $this->post('user'));
     }
 
     private function getCurrentUsername(): string
@@ -183,36 +251,4 @@ class ManagementController extends ManagementBaseController
         return $post_count;
     }
 
-    private function getCurrentWeek(): string
-    {
-        // Récupérer le numéro de la semaine du mois courant
-        $semaine_courante = ceil(date('j') / 7);
-
-        // Récupérer le mois en chiffre
-        $mois_courant = date('n');
-
-        // Récupérer l'année courante
-        $annee_courante = date('Y');
-
-        // Afficher le libellé de la semaine du mois courant
-        return "la semaine $semaine_courante du $mois_courant/$annee_courante";
-    }
-
-    private function getWeekList(): array
-    {
-        // Récupérer la semaine courante
-        $semaine_courante = date('W');
-        $annee_courante = date('Y');
-
-        // Créer une liste des semaines de l'année
-        $liste_semaines = array();
-        for ($i = $semaine_courante; $i <= 52; $i++) {
-            $date_semaine = date('Y-m-d', strtotime("{$annee_courante}-W{$i}"));
-            $mois_annee = date('F/Y', strtotime($date_semaine));
-            $texte_option = "Semaine $i - $mois_annee";
-            $liste_semaines[$i] = $texte_option;
-        }
-
-        return $liste_semaines;
-    }
 }

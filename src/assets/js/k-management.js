@@ -9,12 +9,15 @@ class KManagement {
         this.currentWeekSelector = this.getPrefix() + 'current-week';
         this.taskSelector = this.getPrefix() + 'task-';
         this.descriptionSelector = this.getPrefix() + 'description-';
+        this.doneSelector = this.getPrefix() + 'done-';
+
         this.datepickerSelector = idd;
 
         //actions
         this.actions = {
             save: 'management_save_week',
             get: 'management_get_week',
+            done: 'management_done_week'
         };
 
 
@@ -22,7 +25,7 @@ class KManagement {
         this.users = users;
         this.daysOfWeek = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
         this.options = ["Aucun", "Article", "Edito", "JDX", "Perso", "Test", "Preview", "Absence"];
-        this.daysOfWeekHead = ["Jour", "Date", "Tâche", "Description"];
+        this.daysOfWeekHead = ["Jour", "Date", "Tâche", "Description", "Fait"];
 
         this.calendarBody = this.getEl(idb);
         this.calendarUsers = this.getEl(idu);
@@ -32,8 +35,6 @@ class KManagement {
         this.currentWeek = this.getCurrentWeek();
 
         this.init();
-
-
 
         this.loadWeek();
     }
@@ -95,6 +96,17 @@ class KManagement {
         const row = this.createEl("tr");
         row.classList.add('management-actions');
         return row;
+    }
+
+    createDoneCell(index) {
+        const doneCell = this.createEl("td");
+        const doneCheckbox = this.createEl("input");
+
+        doneCheckbox.setAttribute("id", this.doneSelector + index);
+        doneCheckbox.setAttribute("type", "checkbox"); 
+        doneCheckbox.addEventListener("click", () => this.handleDone());
+        doneCell.appendChild(doneCheckbox);
+        return doneCell;
     }
 
     createTaskCell(index) {
@@ -220,7 +232,7 @@ class KManagement {
         return this;
     }
 
-    appendEmptyCell(row) {
+    appendWeekCell(row) {
         const emptyCell = this.createEl("td");
         emptyCell.innerHTML = '<p style="color:white; font-weight: bold; font-size: 15px; margin:15px">Semaine : ' + this.currentWeek + '/' + this.currentYear + '</p>';
         row.appendChild(emptyCell);
@@ -228,6 +240,19 @@ class KManagement {
         return this;
     }
 
+    appendEmptyCell(row) {
+        const emptyCell = this.createEl("td");
+        emptyCell.innerHTML = "";
+        row.appendChild(emptyCell);
+
+        return this;
+    }
+
+    appendDoneCell(row, index) {
+        row.appendChild(this.createDoneCell(index));
+
+        return this;
+    }
 
     prependUserList() {
         this.calendarUsers.appendChild(this.buildUserList());
@@ -276,6 +301,7 @@ class KManagement {
             this.appendDateCell(row, this.getCurrentDay(i));
             this.appendTaskCell(row, i);
             this.appendDescriptionCell(row, i);
+            this.appendDoneCell(row, i)
 
             fragment.appendChild(row);
         }
@@ -283,8 +309,9 @@ class KManagement {
         const managementActionsRow = this.createManagementActionsRow();
 
         this.appendPrevButtonCell(managementActionsRow)
-            .appendEmptyCell(managementActionsRow)
+            .appendWeekCell(managementActionsRow)
             .appendNextButtonCell(managementActionsRow)
+            .appendEmptyCell(managementActionsRow)
             .appendSaveButtonCell(managementActionsRow);
 
         fragment.appendChild(managementActionsRow);
@@ -297,6 +324,10 @@ class KManagement {
     handleUserChange(event) {
         this.currentUser = event.target.value;
         this.loadWeek();
+    }
+
+    handleDone() {
+        this.saveDone();
     }
 
     // Action methods
@@ -381,6 +412,26 @@ class KManagement {
         return userList;
     }
 
+    saveDone() {
+        const weekData = {
+            action: this.actions.done,
+            user: this.currentUser,
+            week: this.currentWeek,
+            year: this.currentYear,
+            dones: []
+        };
+
+        for (let i = 0; i < 7; i++) {
+            const doneInput = this.getEl(this.doneSelector + i);
+            weekData.dones.push(doneInput.checked);
+        }
+
+        $.post(this.adminUrl, weekData, function (response) {
+            alert('Tâche sauvegardée !');
+        });
+        
+    }
+
     saveWeek() {
         const weekData = {
             action: this.actions.save,
@@ -388,15 +439,18 @@ class KManagement {
             week: this.currentWeek,
             year: this.currentYear,
             tasks: [],
-            descriptions: []
+            descriptions: [],
+            dones: []
         };
 
         for (let i = 0; i < 7; i++) {
             const taskSelect = this.getEl(this.taskSelector + i);
             const descriptionInput = this.getEl(this.descriptionSelector + i);
+            const doneInput = this.getEl(this.doneSelector + i);
 
             weekData.tasks.push(taskSelect.value);
             weekData.descriptions.push(descriptionInput.value);
+            weekData.dones.push(doneInput.checked);
         }
 
         $.post(this.adminUrl, weekData, function (response) {
@@ -415,9 +469,13 @@ class KManagement {
 
         $.post(this.adminUrl, weekData, (response) => {
             const parsedResponse = JSON.parse(response);
+
+            console.log(parsedResponse);
             if (parsedResponse && parsedResponse.tasks && parsedResponse.descriptions) {
                 weekData.tasks = parsedResponse.tasks;
                 weekData.descriptions = parsedResponse.descriptions;
+                weekData.dones = (parsedResponse.dones)? parsedResponse.dones: [];
+                
 
                 this.updateTaskAndDescriptionValues(weekData);
             }
@@ -429,9 +487,11 @@ class KManagement {
         for (let i = 0; i < 7; i++) {
             const taskSelect = document.getElementById(this.taskSelector + i);
             const descriptionInput = document.getElementById(this.descriptionSelector + i);
+            const doneInput = document.getElementById(this.doneSelector + i);
 
             taskSelect.value = weekData.tasks[i];
             descriptionInput.value = weekData.descriptions[i];
+            doneInput.checked = (weekData.dones[i] === "true")? true: false;
         }
     }
 }

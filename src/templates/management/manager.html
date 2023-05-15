@@ -33,12 +33,26 @@
 
     $(document).ready(function () {
 
-    const ukgenda = new KManagementReadOnly('{{admin_url}}', [{{ user_data }}], 'ukld', 'uk-day', 'uk-users', 'uk');
+    
+        const ukgenda = new KManagementReadOnly(
+            '{{admin_url}}', 
+            [{{ user_data }}], 
+            'ukld', 
+            'uk-day', 
+            'uk-users', 
+            'uk'
+        );
 
     {% if user in manager_ids %}
-
-    const kgenda = new KManagement('{{admin_url}}', {{ user_list }}, 'kld', 'k-day', 'k-users');
-
+    
+        const kgenda = new KManagement(
+            '{{admin_url}}', 
+            {{ user_list }}, 
+            'kld', 
+            'k-day', 
+            'k-users'
+        );
+    
     {% endif %}
 
     });
