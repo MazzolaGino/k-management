@@ -1,23 +1,26 @@
 <h1>To-do list de la semaine</h1>
 
 <div class="management-author">
-    <p>Bonjour <strong>{{username}}</strong> ! Voici ton planing de la semaine :</p>
-    <div class="k-management-user">
-        <h3>Liste des tâches</h3>
-        <div id="uklendar"></div>
+    <p>Bonjour <strong>{{username}}</strong></p>
+    <h2>Tâches de la semaine</h2>
+
+    <div class="k-management">
+        <h4>Vous : <span id="uk-users"></span></h4>
+        <h4>Selectionner un jour : <span id="uk-day"></span></h4>
+        <div id="ukld"></div>
     </div>
+
+    <hr />
 
     {% if user in manager_ids %}
 
-    <div class="k-management">
-        <h3>Selectionner un utilisateur : <span id="klendar-users"></span></h3>
-        <h3> Selectionner un jour : <span id="k-genda"></span></h3>
+    <h2>Gestion des tâches par semaine</h2>
 
-        <h3>Liste des tâches </h3>
-        <div id="klendar"></div>
+    <div class="k-management">
+        <h4>Selectionner un utilisateur : <span id="k-users"></span></h4>
+        <h4>Selectionner un jour : <span id="k-day"></span></h4>
+        <div id="kld"></div>
     </div>
-    
-    
 
     {% endif %}
 
@@ -30,13 +33,11 @@
 
     $(document).ready(function () {
 
-
-
-        const uKgenda = new KUserWeeks('{{admin_url}}', {{ user }}, 'uklendar', 'uklendar-actions');
+    const ukgenda = new KManagementReadOnly('{{admin_url}}', [{{ user_data }}], 'ukld', 'uk-day', 'uk-users', 'uk');
 
     {% if user in manager_ids %}
 
-    const kgenda = new KManagement('{{admin_url}}', {{ user_list }}, 'klendar', 'klendar-actions', 'klendar-users');
+    const kgenda = new KManagement('{{admin_url}}', {{ user_list }}, 'kld', 'k-day', 'k-users');
 
     {% endif %}
 

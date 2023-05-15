@@ -19,5 +19,6 @@ class ManagementBaseController extends Controller
     {
         wp_enqueue_style(uniqid(), $this->path->url('assets/css/k-management.css'));
         wp_enqueue_script(uniqid(), $this->path->url('assets/js/k-management.js'));
+        wp_enqueue_script(uniqid(), $this->path->url('assets/js/user-management.js'));
     }
 }

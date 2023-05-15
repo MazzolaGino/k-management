@@ -1,7 +1,8 @@
 {
     "assets": [
         "k-management.css",
-        "k-management.js"
+        "k-management.js",
+        "user-management.js"
     ],
     "controller_namespace" : "\\KManagement\\Controller\\",
     "controllers" : {

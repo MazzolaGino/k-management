@@ -40,6 +40,7 @@ class ManagementController extends ManagementBaseController
             'username' => $this->getCurrentUsername(),
             'post_count' => $this->getCurrentUserPostCount(),
             'user' => get_current_user_id(),
+            'user_data' => json_encode(wp_get_current_user(), JSON_PRETTY_PRINT),
             'user_list' =>  json_encode($this->getAdmins(), JSON_PRETTY_PRINT),
             'admin_url' => \admin_url('admin-ajax.php'),
             'manager_ids' => [28, 46]
